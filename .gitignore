@@ -4,3 +4,5 @@ node_modules
 # Environment variables
 .env
 
+# misc
+.DS_Store

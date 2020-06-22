@@ -1,21 +1,22 @@
 const walkSync = require('walk-sync');
+const config = require('../config');
+const Sequelize = require('sequelize');
 
-module.exports = function getModels(sequelize) {
-  const models = {};
-  const paths = walkSync(`./models`, {
-    globs: ['*.js'],
-    ignore: ['index.js'],
-  });
+const sequelize = new Sequelize(config.db);
+const db = {};
+  
+walkSync(`./models`, {
+  globs: ['*.model.js'],
+  ignore: ['index.js'],
+}).forEach((file) => {
+  const model = sequelize.import(`${file}`);
+  db[model.name] = model;
+});
 
-  paths.forEach((file) => {
-    const model = sequelize.import(`${file}`);
-    models[model.name] = model;
-  });
+Object.keys(db).forEach((modelName) => {
+  if (db[modelName].associate) {
+    db[modelName].associate(db);
+  }
+});
 
-  Object.keys(models).forEach((modelName) => {
-    if (models[modelName].associate) {
-      models[modelName].associate(models);
-    }
-  });
-  return models;
-}
+module.exports = db;

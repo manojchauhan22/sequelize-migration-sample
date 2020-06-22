@@ -4,6 +4,7 @@ const getModels = require('./models');
 const express = require('express');
 const BodyParser = require('body-parser');
 const config = require('./config');
+const routes = require('./routes');
 
 const sequelize = new Sequelize(config.db);
 // migration
@@ -64,23 +65,12 @@ if (migrationArgs) {
 
 // server
 const app = express();
-const models = getModels(sequelize);
 
 // middleware
 app.use(BodyParser.json());
 
 // routes
-app.get('/test', (req, res) => {
-	res.status(200).json('Ok');
-});
-
-app.get('/users', (req, res) => {
-	models.Profile.findAll().then(users => {
-		res.status(200).json({ users });
-	}).catch(err => {
-		console.log(err);
-	})
-});
+app.use('/api',  routes);
 
 app.listen(config.port, function() {
 	console.log(`Server running on port ${ config.port }`);
