@@ -1,4 +1,4 @@
-# ORO Wellness
+# Sequelize Migration Sample
 
 ##### Available Scripts
 `npm start`: starts the server.
